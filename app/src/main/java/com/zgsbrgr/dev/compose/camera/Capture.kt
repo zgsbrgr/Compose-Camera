@@ -73,7 +73,7 @@ fun Capture(
             Animatable(500f)
         }
 
-        val lineWidth = remember {
+        val lineAlpha = remember {
             Animatable(0f)
         }
 
@@ -110,7 +110,8 @@ fun Capture(
                     lineColor,
                     Offset((center.x - 450), center.y - lineOffsetY.value),
                     Offset((center.x + 450), center.y - lineOffsetY.value),
-                    lineWidth.value
+                    15f,
+                    alpha = lineAlpha.value
 
                 )
             })
@@ -143,19 +144,22 @@ fun Capture(
             }
 
             launch {
-                lineWidth.animateTo(
-                    15f,
+                lineAlpha.animateTo(
+                    1f,
                     tween(300, 700)
                 )
                 lineOffsetY.animateTo(
                     -500f,
                     animationSpec = infiniteRepeatable(
-                        animation = tween(700, easing = LinearEasing),
+                        animation = tween(850, easing = LinearEasing),
                         repeatMode = RepeatMode.Reverse
                     )
 
                 )
             }
+
+
+
             imageAnalysisUseCase.analyzeImage(context.executor)
 
             //val viewPort = ViewPort.Builder(Rational(250, 100), Surface.ROTATION_90).build()
