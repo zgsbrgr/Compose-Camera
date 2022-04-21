@@ -2,6 +2,8 @@ package com.zgsbrgr.dev.compose.camera
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.BlurMaskFilter
+import android.graphics.Paint
 import android.util.Log
 import android.util.Size
 import androidx.camera.core.*
@@ -34,6 +36,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
+
 @SuppressLint("UnsafeOptInUsageError")
 @Composable
 fun Capture(
@@ -65,6 +68,7 @@ fun Capture(
             )
         }
 
+
         val (clippingHeight, clippingWidth) = remember {
             Animatable(0f) to Animatable(0f)
         }
@@ -77,8 +81,6 @@ fun Capture(
             Animatable(0f)
         }
 
-        val lineColor = colorResource(id = R.color.color_dark_blue)
-
         Box {
             CameraPreview(
                 modifier = Modifier.fillMaxSize(),
@@ -87,7 +89,6 @@ fun Capture(
                 }
             )
             Canvas(modifier = Modifier.fillMaxSize(), onDraw = {
-
                 val rectPath = Path().apply {
                     addRoundRect(
                         RoundRect(
@@ -107,13 +108,15 @@ fun Capture(
                     drawRect(SolidColor(Color.Black.copy(alpha = 0.3f)))
                 }
                 drawLine(
-                    lineColor,
+                    brush = Brush.radialGradient(
+                        colors = listOf(Color(alpha=248, red=255, green = 255, blue =  255), Color(alpha = 235, red =  74, green =  138, blue = 255))
+                    ),
                     Offset((center.x - 450), center.y - lineOffsetY.value),
                     Offset((center.x + 450), center.y - lineOffsetY.value),
                     15f,
-                    alpha = lineAlpha.value
-
+                    alpha = lineAlpha.value,
                 )
+
             })
             CaptureButton(
                 modifier = Modifier
@@ -130,6 +133,7 @@ fun Capture(
             )
         }
         LaunchedEffect(previewUseCase) {
+
             launch {
                clippingHeight.animateTo(
                     600f,
@@ -204,7 +208,7 @@ suspend fun ImageAnalysis.analyzeImage(executor: Executor): String {
     return withContext(Dispatchers.IO) {
         setAnalyzer(executor) { imageProxy ->
             imageProxy.image?.let {
-                Log.d("ImageAnalysis", it.timestamp.toString())
+                //Log.d("ImageAnalysis", it.timestamp.toString())
             }
             imageProxy.close()
         }
